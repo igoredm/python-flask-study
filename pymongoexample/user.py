@@ -1,8 +1,8 @@
 class User:
   def __init__(self):
-    self.name = None
-    self.email = None
-    self.pwd = None
+    self.name = ""
+    self.email = ""
+    self.pwd = ""
 
   def setName(self, name):
     self.name = name
