@@ -3,9 +3,34 @@ from models.hotel import HotelModel
 from dao.hotel import HotelDao
 
 class Hoteis(Resource):
+  argumentos = reqparse.RequestParser()
+  argumentos.add_argument('nome')
+  argumentos.add_argument('estrelas')
+  argumentos.add_argument('diaria')
+  argumentos.add_argument('cidade')
+
+
   def get(self):
-    print(HotelDao.findAll())
-    return { 'Hoteis': [] }, 200
+    cursor = HotelDao.findAll()
+    lista = []
+
+    for c in cursor:
+      c['_id'] = str(c['_id'])
+      lista.append(c)
+
+    return lista, 200
+
+
+  def post(self):
+
+    dados = Hotel.argumentos.parse_args()
+
+    obj = HotelModel(**dados)
+    hotel = obj.toJson()
+
+    returnObj = HotelDao.save(hotel)
+
+    return "Hotel salvo com id: " + str(returnObj.inserted_id), 201
 
 
 class Hotel(Resource):
@@ -15,71 +40,40 @@ class Hotel(Resource):
   argumentos.add_argument('diaria')
   argumentos.add_argument('cidade')
 
-  def findHotel(id):
-    for hotel in hoteis:
-      if hotel['id'] == id: return hotel
-    return None
-
-
   def get(self, id):
-    hotel = Hotel.findHotel(id)
+    try:
+      hotel = HotelDao.findById(id)
+    except:
+      return None, 400
+
     if hotel:
-      return hotel
-    return {'message': 'Hotel não encontrado.'}, 404
-
-  def post(self, id):
-
-    dados = Hotel.argumentos.parse_args()
-
-    novoHotelObj = HotelModel(id, **dados)
-    # novoHotel = novoHotelObj.toJson()
-
-    # hoteis.append(novoHotel)
-
-    id = HotelDao.save(novoHotelObj)
-
-
-    return "Hotel salvo com id: " + str(id), 201
+      hotel['_id'] = str(hotel['_id'])
+      return hotel, 200
+    return None, 404
 
   def put(self, id):
     dados = Hotel.argumentos.parse_args()
 
-    novoHotelObj = HotelModel(id, **dados)
+    novoHotelObj = HotelModel(**dados)
     novoHotel = novoHotelObj.toJson()
 
-    hotel = Hotel.findHotel(id)
+    try: 
+      hotel = HotelDao.findById(id)
+    except:
+      return None, 400
     if hotel:
       hotel.update(novoHotel)
+      print(hotel)
+      HotelDao.update(hotel)
       return novoHotel, 200
-    
-    hoteis.append(novoHotel)
-    return novoHotel, 201
+    return None, 404
 
   def delete(self, id):
-    global hoteis
-    hoteis = [hotel for hotel in hoteis if hotel['id'] != id]
-    return None ,204
+    try:
+      returnObj = HotelDao.delete(id)
+    except:
+      return None, 400
 
-hoteis = [
-  {
-    'id': 1,
-    'nome': 'Alpha Hotel',
-    'estrelas': 4.3,
-    'diaria': 380.34,
-    'cidade': 'Jundiaí'
-  },
-  {
-    'id': 2,
-    'nome': 'Bravo Hotel',
-    'estrelas': 4.4,
-    'diaria': 420.52,
-    'cidade': 'São Paulo'
-  },
-  {
-    'id': 3,
-    'nome': 'Hotel Charlie',
-    'estrelas': 3.9,
-    'diaria': 310.20,
-    'cidade': 'Araraquara'
-  }
-]
+    if returnObj.deleted_count > 0:
+      return None, 204  
+    return None, 404

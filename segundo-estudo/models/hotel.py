@@ -1,7 +1,6 @@
 class HotelModel():
   
-  def __init__(self, id, nome, estrelas, diaria, cidade):
-    self.id = id
+  def __init__(self, nome, estrelas, diaria, cidade):
     self.nome = nome
     self.estrelas = estrelas
     self.diaria = diaria
@@ -9,7 +8,6 @@ class HotelModel():
 
   def toJson(self):
     return {
-      'id': self.id,
       'nome': self.nome,
       'estrelas': self.estrelas,
       'diaria': self.diaria,
