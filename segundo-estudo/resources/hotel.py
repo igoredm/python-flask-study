@@ -1,13 +1,14 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
 from dao.hotel import HotelDao
+from flask_jwt_extended import jwt_required
 
 class Hoteis(Resource):
   argumentos = reqparse.RequestParser()
-  argumentos.add_argument('nome')
-  argumentos.add_argument('estrelas')
-  argumentos.add_argument('diaria')
-  argumentos.add_argument('cidade')
+  argumentos.add_argument('nome', type=str, required=True, help="O campo 'nome' não pode ser deixado em branco")
+  argumentos.add_argument('estrelas', type=float, required=True, help="O campo 'estrelas' não pode ser deixado em branco")
+  argumentos.add_argument('diaria', type=float, required=True, help="O campo 'diaria' não pode ser deixado em branco")
+  argumentos.add_argument('cidade', type=str, required=True, help="O campo 'cidade' não pode ser deixado em branco")
 
 
   def get(self):
@@ -20,7 +21,7 @@ class Hoteis(Resource):
 
     return lista, 200
 
-
+  @jwt_required
   def post(self):
 
     dados = Hotel.argumentos.parse_args()
@@ -35,22 +36,23 @@ class Hoteis(Resource):
 
 class Hotel(Resource):
   argumentos = reqparse.RequestParser()
-  argumentos.add_argument('nome')
-  argumentos.add_argument('estrelas')
-  argumentos.add_argument('diaria')
-  argumentos.add_argument('cidade')
+  argumentos.add_argument('nome', type=str, required=True, help="O campo 'nome' não pode ser deixado em branco")
+  argumentos.add_argument('estrelas', type=float, required=True, help="O campo 'estrelas' não pode ser deixado em branco")
+  argumentos.add_argument('diaria', type=float, required=True, help="O campo 'diaria' não pode ser deixado em branco")
+  argumentos.add_argument('cidade', type=str, required=True, help="O campo 'cidade' não pode ser deixado em branco")
 
   def get(self, id):
     try:
       hotel = HotelDao.findById(id)
     except:
-      return None, 400
+      return None, 404
 
     if hotel:
       hotel['_id'] = str(hotel['_id'])
       return hotel, 200
     return None, 404
 
+  @jwt_required
   def put(self, id):
     dados = Hotel.argumentos.parse_args()
 
@@ -60,7 +62,7 @@ class Hotel(Resource):
     try: 
       hotel = HotelDao.findById(id)
     except:
-      return None, 400
+      return None, 404
     if hotel:
       hotel.update(novoHotel)
       print(hotel)
@@ -68,6 +70,7 @@ class Hotel(Resource):
       return novoHotel, 200
     return None, 404
 
+  @jwt_required
   def delete(self, id):
     try:
       returnObj = HotelDao.delete(id)

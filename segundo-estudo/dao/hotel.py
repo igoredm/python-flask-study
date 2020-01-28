@@ -1,6 +1,5 @@
 from extensions import mongo
 from bson.objectid import ObjectId
-from models.hotel import HotelModel
 
 class HotelDao():
 
