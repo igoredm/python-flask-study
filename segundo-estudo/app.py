@@ -3,14 +3,17 @@ from flask_restful import Api
 from resources.hotel import Hoteis, Hotel
 from extensions import mongo
 
-app = Flask(__name__)
-app.config['MONGO_URI'] = "mongodb://devuser:devpass@localhost/dev"
+def create_app(config_object='settings'):
 
-api = Api(app)
+  app = Flask(__name__)
+  
+  app.config.from_object(config_object)
 
-api.add_resource(Hoteis, '/hoteis')
-api.add_resource(Hotel, '/hoteis/<string:id>')
+  api = Api(app)
 
-if __name__ == "__main__":
+  api.add_resource(Hoteis, '/hoteis')
+  api.add_resource(Hotel, '/hoteis/<string:id>')
+
   mongo.init_app(app)
-  app.run(debug=True)
+
+  return app

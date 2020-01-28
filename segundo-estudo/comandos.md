@@ -14,6 +14,7 @@ deactivate
 pip install Flask
 pip install Flask-Restful
 pip install flask-pymongo
+pip isntall python-dotenv
 
 ## Listar dependências
 pip freeze
