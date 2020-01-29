@@ -20,3 +20,5 @@ Inicio após o termino do primeiro estudo, seguindo um curso da Udemy e fazendo 
 > Título: [REST APIs com Python e Flask](https://www.udemy.com/course/rest-apis-com-python-e-flask/)  
 > Instrutor: [Danilo Moreira](https://www.udemy.com/user/danilo-moreira-dos-santos/)  
 
+### Igoredm - 2020
+
