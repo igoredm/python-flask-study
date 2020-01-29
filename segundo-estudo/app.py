@@ -13,8 +13,6 @@ def create_app(config_object='settings'):
 
     app.config.from_object(config_object)
 
-    app.config['JWT_COOKIE_CSRF_PROTECT'] = False
-
     api = Api(app)
     jwt = JWTManager(app)
 
