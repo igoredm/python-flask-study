@@ -1,8 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.usuario import UserModel
 from dao.usuario import UserDao
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from werkzeug.security import safe_str_cmp
+from blacklist import BLACKLIST
 
 argumentos = reqparse.RequestParser()
 argumentos.add_argument('login', type=str, required=True, help="O campo 'login' não pode ser deixado em branco")
@@ -37,6 +38,14 @@ class UserLogin(Resource):
       accessToken = create_access_token(identity=str(user['_id']))
       return {'access_token': accessToken}, 200
     return {'message': 'Usuário ou senha inválidos'}, 401
+
+
+class UserLogout(Resource):
+  @jwt_required
+  def post(self):
+    jwtId = get_raw_jwt()['jti']
+    BLACKLIST.add(jwtId)
+    return {'message': 'Deslogado com sucesso!'}, 200
 
 
 class User(Resource):
