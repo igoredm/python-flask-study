@@ -1,5 +1,3 @@
-![yeah](http://badges.saporracorp.com/not-a-bug-a-feature.svg)
-
 # Python-Flask
 
 ## Primeiro Estudo:
